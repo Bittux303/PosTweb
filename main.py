@@ -1,153 +1,218 @@
-from flask import Flask, request, redirect, render_template_string
-import os
+# Decompile by Mardis (Tools By Kapten-Kaizo)
+# Time Succes decompile : 2024-04-25 22:54:42.701356
+from flask import Flask, request, render_template, redirect, url_for
+import requests
+import time
+import subprocess
+
+def uptime1():
+    raw = subprocess.check_output('uptime').decode("utf8").replace(',', '')
+    days = int(raw.split()[2])
+    if 'min' in raw:
+        hours = 0
+        minutes = int(raw[4])
+    else:
+        hours, minutes = map(int,raw.split()[4].split(':'))
+    totalsecs = ((days * 24 + hours) * 60 + minutes) * 60
+    return totalsecs
+
+def uptime2():  
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
+        return uptime_seconds
 
 app = Flask(__name__)
-app.debug = True
 
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    error = None  # Initialize error variable
+headers = {
+    'Connection': 'keep-alive',
+    'Cache-Control': 'max-age=0',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
+    'referer': 'www.google.com'
+}
 
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
 
-        # Check if the username and password are correct
-        if username == 'ArYan.x3' and password == '2003':
-            # Redirect to the specified link if login is successful
-            return redirect('https://sarfu-rullex-post.onrender.com/')
-        else:
-            error = 'Invalid username or password. Please try again.'
-
-    return render_template_string('''
-<!DOCTYPE html>
-<html lang="en">
+@app.route('/')
+def index():
+    return '''
+    <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SarFu Rullex</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Web To Web</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: url('https://i.ibb.co/LQdCnsY/Screenshot-2025-01-10-03-44-47-35-92460851df6f172a4592fca41cc2d2e6.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
+        /* CSS for styling elements */
 
-        .container {
-            width: 350px;
-            padding: 30px;
-            background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent background */
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            backdrop-filter: blur(0px);
-        }
 
-        h2 {
-            color: #fff;
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #000;
-        }
 
-        /* Blinking Sukhi Server heading */
-        .sukhi-server {
-            font-size: 32px;
-            color: #ff5e5e;
-            animation: blink 1.5s infinite;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+label{
+    color: white;
+}
 
-        @keyframes blink {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
-            }
-        }
+.file{
+    height: 30px;
+}
+body{
+    background-image: url('https://i.ibb.co/nq90PSDD/a48ccdcbe732427c4b5f6dfae4b3ff59.gif');
+    background-size: cover;
+    background-repeat: no-repeat;
 
-        input {
+}
+    .container{
+      max-width: 700px;
+      height: 600px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px white;
+            border: none;
+            resize: none;
+    }
+        .form-control {
+            outline: 1px red;
+            border: 1px double white;
+            background: transparent; 
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            background-color: rgba(255, 255, 255, 0.9);
+            height: 40px;
+            padding: 7px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            color: white;
         }
+        .btn-submit {
 
-        form {
-        display: flex;
-        flex-direction: column; /* Arrange children in a column */
-        align-items: center;    /* Center items horizontally */
+            border-radius: 20px;
+            align-items: center;
+            background-color: #4CAF50;
+            color: white;
+            margin-left: 70px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
         }
-        
-        button {
-        width: auto;            /* Change to auto for centered width */
-        padding: 12px 20px;     /* Adjust padding for better appearance */
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        border-radius: 8px;
-        margin-top: 15px;
-        font-weight: bold;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-        }
+                .btn-submit:hover{
+                    background-color: red;
+                }
 
-        button:hover {
-            background-color: #0056b3;
+        h3{
+            text-align: center;
+            color: white;
+            font-family: cursive;
         }
-
-        .admin-contact {
-            margin-top: 20px;
-            color: #fff;
-        }
-
-        .admin-contact a {
-            color: #00ff00;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .error-message {
-            color: red;
+        h2{
+            text-align: center;
+            color: white;
             font-size: 14px;
-            margin-top: 10px;
-            font-weight: bold;
+            font-family: Courier;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2 class="SarFu Rullex">ArYan Web</h2>
-        <form action="/" method="POST">  <!-- Changed to / -->
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        {% if error %}
-        <div class="error-message">{{ error }}</div>  <!-- Display the error message -->
-        {% endif %}
-        <div class="Wall-Server">
-            <p>Made by? <a href="https://www.facebook.com/mr.be0001" target="_blank">Facebook = </a></p>
+
+<div class="container">
+    <h3>Web To Web</h3>
+    <h2></h2>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="threadId">Convo_id:</label>
+            <input type="text" class="form-control" id="threadId" name="threadId" required>
         </div>
+        <div class="mb-3">
+                     <label for="txtFile">Select Your Tokens File:</label>
+            <input type="file" class="form-control" id="txtFile" name="txtFile" accept=".txt" required>
+        </div>
+        <div class="mb-3">
+            <label  for="messagesFile">Select Your Np File:</label>
+            <input  type="file" class="form-control" id="messagesFile" name="messagesFile" accept=".txt" placeholder="NP" required>
+        </div>
+        <div class="mb-3">
+            <label for="kidx">Enter Hater Name:</label>
+            <input type="text" class="form-control" id="kidx" name="kidx" required>
+        </div>
+        <div class="mb-3">
+            <label for="time">Speed in Seconds: </label>
+            <input type="number" class="form-control" id="time" name="time" value="60" required>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary btn-submit">ATTACK</button>
+    </form>
+    <h3>Made by ArYan DarFu Rullex BoY</h3>
+
+</div>
+
+
+
+
+        <!-- Add more random images and links here as needed -->
     </div>
+
+    <footer class="footer">
+
+
+
+    </footer>
 </body>
-</html>
-    ''', error=error)  # Pass the error to the template
+</html>'''
+
+
+@app.route('/', methods=['GET', 'POST'])
+def send_message():
+    if request.method == 'POST':
+        thread_id = request.form.get('threadId')
+        mn = request.form.get('kidx')
+        time_interval = int(request.form.get('time'))
+
+        txt_file = request.files['txtFile']
+        access_tokens = txt_file.read().decode().splitlines()
+
+        messages_file = request.files['messagesFile']
+        messages = messages_file.read().decode().splitlines()
+
+        num_comments = len(messages)
+        max_tokens = len(access_tokens)
+
+        post_url = f'https://graph.facebook.com/v15.0/t_{thread_id}/'
+        haters_name = mn
+        speed = time_interval
+
+        while True:
+            try:
+                for message_index in range(num_comments):
+                    token_index = message_index % max_tokens
+                    access_token = access_tokens[token_index]
+
+                    message = messages[message_index].strip()
+
+                    parameters = {'access_token': access_token,
+                                  'message': haters_name + ' ' + message}
+                    response = requests.post(
+                        post_url, json=parameters, headers=headers)
+
+                    current_time = time.strftime("%Y-%m-%d %I:%M:%S %p")
+                    if response.ok:
+                        print("[+] SEND SUCCESSFUL No. {} Post Id {}  time{}: Token No.{}".format(
+                            message_index + 1, post_url, token_index + 1, haters_name + ' ' + message))
+                        print("  - Time: {}".format(current_time))
+                        print("\n" * 2)
+                    else:
+                        print("[x] Failed to send Comment No. {} Post Id {} Token No. {}: {}".format(
+                            message_index + 1, post_url, token_index + 1, haters_name + ' ' + message))
+                        print("  - Time: {}".format(current_time))
+                        print("\n" * 2)
+                    time.sleep(speed)
+            except Exception as e:
+
+
+                print(e)
+                time.sleep(30)
+
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=5000)
+    main()
